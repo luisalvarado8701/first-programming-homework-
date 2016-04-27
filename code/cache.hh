@@ -16,13 +16,11 @@ class Block{
 private:
 	unsigned int tag, valid;
 public:
-	Block(){tag =0; valid=0;last_used=0;}
+	Block(){tag =0; valid=0;}
 	~Block(){};
 	bool isValid() {return valid==1;}
 	bool cmpTag(unsigned int dirTag) {return tag == dirTag;}
 	void setAsValid() {this->valid=1;}
-	void setLastUsed() {this->last_used=1;}
-	void clearLastUsed() {this->last_used=0;}
 	void setTag(unsigned int dirTag){ tag=dirTag;}
 	};
 	
