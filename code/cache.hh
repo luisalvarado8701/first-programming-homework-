@@ -36,12 +36,13 @@ class Cache{
 private:
 	unsigned int set, tag;
 	unsigned int offset_bits, sets_bits;
-	int cache_type, cache_size, block_size, sets_num, set_size, hit_count, miss_count;
+	int asso_level, cache_size, block_size, sets_num, set_size, hit_count, miss_count;
+	int * fifo_index;
 	Block * iterator;
 public:
 	Cache(int, int, int);
 	~Cache(void);
-	int getHitTime(void){return hit_count;};
+	int getMissRate(void){return miss_count ;}
 	void dataReq(unsigned int);
 	};
 

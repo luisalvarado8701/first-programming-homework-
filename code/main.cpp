@@ -12,13 +12,13 @@ int main(int argc, char *argv[]){
 	Cache mycache(atoi(argv[1]),atoi(argv[2]),atoi(argv[3]));
 	while(getline(cin,instr)){
 		instr = instr.substr(0,8);
-		cout<<"reading line --" <<instr<<endl;
 		stringstream ss;
 		ss<<hex<<instr;
 		ss>>addr;
-		cout<<"int addr: "<<addr<<endl;
 		mycache.dataReq(addr);
 		}
-	}
+	int rate = mycache.getMissRate();
+	cout<<"Final Miss Rate: "<<rate<<endl;
 	return 0;
+	}
 }
