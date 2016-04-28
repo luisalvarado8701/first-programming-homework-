@@ -8,36 +8,36 @@ Cache::Cache(int cache_size, int block_size, int cache_type){
 	this->block_size = block_size;
 	this->cache_size = cache_size;
 	this->offset_bits = log2 (block_size);
-	//la cantidad de sets depende de la asociatividad y de la cantidad de bloques
+	//the count of "sets" will depend of the associativity and the count of "blocks"
 	this->sets_num = ((cache_size*1024)/block_size) / cache_type;
-	//aqui se calcula cuántos bits se necesitan para escoger el set
+	//here we are calculating how many "bits" that we'll need to select the "set"
 	this->sets_bits = log2 (this->sets_num);
-	//se necesita conocer el tamaño del set en bits
+	//We will need to know the size of the "set" in bits
 	this->set_size = (this->block_size * cache_type);
-	//puntero utilizado en la política de reemplazo
-	fifo_index = new int[this->sets_num] ();//inicializa el arreglo con ceros
-	iterator = new Block[(this->sets_num * cache_type)];//puntero para recorrer los bloques
+	//This pointer will be used in the replacement policy
+	fifo_index = new int[this->sets_num] ();//itinitializes the array with zeros
+	iterator = new Block[(this->sets_num * cache_type)];//pointer to scroll through the "blocks"
 	cout<<"Associative level = "<<cache_type<<"   --   offset bits = "<<offset_bits<<"   --  index bits = "<<sets_bits<<endl;
 	}
 Cache::~Cache(void){
 	delete [] iterator;
 	}
 void Cache::dataReq(unsigned int addr){
-     //encontrar el set a partir del tamaño de bloque y cantidad de sets
+     //looking for the "set" from the block size and number of sets
 	this->set=(addr/this->block_size) % this->sets_num;
 	cout<<"Set where find a block: "<<this->set<<endl;
-	//se desplazan los bits para obtener únicamente el tag
+	//displace the bits to obtain only the "tag"
 	this->tag = addr >> (this->offset_bits + this->sets_bits);
 	cout<<"Tag to verify: "<<tag<<endl;
 	switch(this->asso_level){
 		case 0:
 			//cout<<"direct mapped cache";
 			if((iterator[set].isValid()) && (iterator[set].cmpTag(this->tag))){
-            //si el bit de válido está en 1 y el tag coincide:
+            //if valid bit is set to 1 and the "tag" matches
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 				} else{
-                    //si no coincide, se cuenta miss y se trae el bloque
+                    //if don't, count 1 miss and brings the "block"
 					this->miss_count++;
 					cout<<" -- miss"<<endl;
 					iterator[set].setAsValid();
@@ -47,35 +47,35 @@ void Cache::dataReq(unsigned int addr){
 		case 2:
 			//cout<<"cache asociativa 2 vÃ­as";
 			if((iterator[this->asso_level*set].isValid()) && (iterator[this->asso_level*set].cmpTag(this->tag))){
-            //si el bit de válido está en 1 y el tag coincide:
+            //if valid bit is set to 1 and the "tag" matches
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
-			//si no coincide, voy al siguiente bloque
+			//if don't, count 1 miss and brings the "block"
 			} else if((iterator[(this->asso_level*set + 1)].isValid()) && (iterator[(this->asso_level*set + 1)].cmpTag(this->tag))){
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 			} else{
-                //si ningún bloque coincide, se cuenta miss y se trae el bloque 
+                //if we don't have any matches, we count 1 miss and brings the "block" 
 				this->miss_count++;
 				cout<<"-- miss"<<endl;
-				//se trae el bloque aplicando la política FIFO
+				//brings the "block", applying the FIFO policy
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setAsValid();
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setTag(this->tag);
 				cout<<"fifo: "<<fifo_index[this->set]<<endl;
-				//aumentamos el puntero para indicar que ya se llenó un bloque
-				//de manera que solo nos quedaría un bloque disponible dentro del set
+				//increase the point to indicates that a "block" is already filled
+				//so we just left a "block" available within the set 
 				fifo_index[this->set]++;
-				//si ya se llenaron los dos bloques, se resetea el contador
-				//de manera que ahora se va a remplazar el primero que había entrada
+				//if the two "blocks" are already filled, the counter is reset
+				//so that now it will replace the first one had entered
 				if(fifo_index[this->set] == this->asso_level){fifo_index[this->set] = 0;}
 			}
 			break;
 		case 4:
 			if((iterator[this->asso_level*set].isValid()) && (iterator[this->asso_level*set].cmpTag(this->tag))){
-            //si el bit de válido está en 1 y el tag coincide:
+            //if valid bit is set to 1 and the "tag" matches
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
-			//si no coincide, voy al siguiente bloque, debo buscar en todos los bloques del set
+			//if don't, I have to go to the next "block", I should looking into the all "blocks"
 			} else if((iterator[(this->asso_level*set + 1)].isValid()) && (iterator[(this->asso_level*set + 1)].cmpTag(this->tag))){
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
@@ -86,17 +86,17 @@ void Cache::dataReq(unsigned int addr){
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 			} else{
-                //si no coincide, se cuenta miss y se trae el bloque
+                //if don't, count 1 miss and brings the "block"
 				this->miss_count++;
 				cout<<"-- miss"<<endl;
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setAsValid();
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setTag(this->tag);
 				cout<<"fifo: "<<fifo_index[this->set]<<endl;
-				//aumentamos el puntero para indicar que ya se llenó un bloque
-				//de manera que solo nos quedaría un bloque disponible dentro del set
+				//increase the point to indicates that a "block" is already filled
+				//so we just left a "block" available within the set
 				fifo_index[this->set]++;
-				//si ya se llenaron los dos bloques, se resetea el contador
-				//de manera que ahora se va a remplazar el primero que había entrada
+				//if the two "blocks" are already filled, the counter is reset
+				//so that now it will replace the first one had entered
 				if(fifo_index[this->set] == this->asso_level){fifo_index[this->set] = 0;}
 			}
 			break;
