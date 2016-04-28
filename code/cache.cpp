@@ -45,14 +45,17 @@ void Cache::dataReq(unsigned int addr){
 		case 2:
 			//cout<<"cache asociativa 2 vÃ­as";
 			if((iterator[this->asso_level*set].isValid()) && (iterator[this->asso_level*set].cmpTag(this->tag))){
+            //si el bit de válido está en 1 y el tag coincide:
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 			} else if((iterator[(this->asso_level*set + 1)].isValid()) && (iterator[(this->asso_level*set + 1)].cmpTag(this->tag))){
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
-			} else{ 
+			} else{
+                //si no coincide, se cuenta miss y se trae el bloque 
 				this->miss_count++;
 				cout<<"-- miss"<<endl;
+				//se trae el bloque aplicando la política FIFO
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setAsValid();
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setTag(this->tag);
 				cout<<"fifo: "<<fifo_index[this->set]<<endl;
@@ -62,6 +65,7 @@ void Cache::dataReq(unsigned int addr){
 			break;
 		case 4:
 			if((iterator[this->asso_level*set].isValid()) && (iterator[this->asso_level*set].cmpTag(this->tag))){
+            //si el bit de válido está en 1 y el tag coincide:
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 			} else if((iterator[(this->asso_level*set + 1)].isValid()) && (iterator[(this->asso_level*set + 1)].cmpTag(this->tag))){
@@ -74,6 +78,7 @@ void Cache::dataReq(unsigned int addr){
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 			} else{
+                //si no coincide, se cuenta miss y se trae el bloque
 				this->miss_count++;
 				cout<<"-- miss"<<endl;
 				iterator[this->asso_level*set + this->fifo_index[this->set]].setAsValid();
