@@ -39,7 +39,7 @@ private:
 public:
 	Cache(int, int, int);
 	~Cache(void);
-	int getMissRate(void){return miss_count ;}
+	int getMissCount(void){return miss_count ;}
 	void dataReq(unsigned int);
 	};
 
