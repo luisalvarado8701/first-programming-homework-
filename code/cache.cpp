@@ -2,34 +2,40 @@
 
 Cache::Cache(int cache_size, int block_size, int cache_type){
 	cout<<"cache size: "<<cache_size<<" MB -- block size: "<<block_size<<" bytes"<<endl;
-	this->tag = this->set;
+	this->tag = this->set;  //************por que se igualan?************
 	this->hit_count = this->miss_count = 0;
 	this->asso_level = cache_type;
 	this->block_size = block_size;
 	this->cache_size = cache_size;
 	this->offset_bits = log2 (block_size);
+	//la cantidad de sets depende de la asociatividad y de la cantidad de bloques
 	this->sets_num = ((cache_size*1024)/block_size) / cache_type;
+	//aqui se calcula cuántos bits se necesitan para escoger el set
 	this->sets_bits = log2 (this->sets_num);
+	//se necesita conocer el tamaño del set en bits
 	this->set_size = (this->block_size * cache_type);
-	fifo_index = new int[this->sets_num] ();
-	iterator = new Block[(this->sets_num * cache_type)];
+	fifo_index = new int[this->sets_num] ();//puntero utilizado en la política de reemplazo
+	iterator = new Block[(this->sets_num * cache_type)];//puntero para recorrer los bloques
 	cout<<"Associative level = "<<cache_type<<"   --   offset bits = "<<offset_bits<<"   --  index bits = "<<sets_bits<<endl;
 	}
 Cache::~Cache(void){
 	delete [] iterator;
 	}
 void Cache::dataReq(unsigned int addr){
+     //encontrar el set a partir del tamaño de bloque y cantidad de sets
 	this->set=(addr/this->block_size) % this->sets_num;
 	cout<<"Set where find a block: "<<this->set<<endl;
-	this->tag = addr >> (this->offset_bits + this->sets_bits);
+	this->tag = addr >> (this->offset_bits + this->sets_bits);//**********veamos esta linea*************
 	cout<<"Tag to verify: "<<tag<<endl;
 	switch(this->asso_level){
 		case 0:
 			//cout<<"direct mapped cache";
 			if((iterator[set].isValid()) && (iterator[set].cmpTag(this->tag))){
+            //si el bit de válido está en 1 y el tag coincide:
 				this->hit_count++;
 				cout<<" -- hit"<<endl;
 				} else{
+                    //si no coincide, se cuenta miss y se trae el bloque
 					this->miss_count++;
 					cout<<" -- miss"<<endl;
 					iterator[set].setAsValid();
