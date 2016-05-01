@@ -3,9 +3,9 @@
 int main(int argc, char *argv[]){
 	float access_counter = 0; //variable was used to estimate the miss-rate
 	srand (time(NULL));
-	if(argc != 4 || atoi(argv[3])>4 || atoi(argv[3])<0 ){
+	if(argc != 4 || ( atoi(argv[3]) !=1 && atoi(argv[3]) != 2 && atoi(argv[3]) != 4 )){
 		cout<<"\"Error: invalid arguments\" \n";
-		cout<<"see README file on how to pass valid arguments ";
+		cout<<"see README file on how to pass valid arguments\n ";
 		}
 	else{
 	string instr; //it will contain the address string

@@ -11,7 +11,7 @@
       
 		<cache size> = Is the cache size in KB (example: 32, 64, 128)
 		<block size> = Is block size in bits (example 16, 32)
-		<associative level> = 	0 : directed mapped
+		<associative level> = 	1 : directed mapped
 								2 : two-way set associative
 								4 : four-way set associative
       

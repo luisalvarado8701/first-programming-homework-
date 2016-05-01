@@ -17,7 +17,11 @@ Cache::Cache(int cacheSize, int blockSize, int cacheType){
 	fifo_index = new int[this->sets_num] ();//itinitializes the array with zeros
 	iterator = new Block[(this->sets_num * cacheType)];//pointer to scroll through the "blocks"
 	cout<<"cache size: "<<cache_size<<" kB -- block size: "<<block_size<<" bytes"<<endl;
-	cout<<"Associative level = "<<cacheType<<"   --   offset bits = "<<offset_bits<<"   --  index bits = "<<sets_bits<<endl;
+	if(cacheType > 1){
+		cout<<"Associative level = "<<cacheType<<"   --   offset bits = "<<offset_bits<<"   --  index bits = "<<sets_bits<<endl;
+		} else {
+			cout<<"Directed Mapped cache   --   offset bits = "<<offset_bits<<"   --  index bits = "<<sets_bits<<endl;
+			}
 	}
 Cache::~Cache(void){
 	delete [] iterator;
@@ -30,7 +34,7 @@ void Cache::dataReq(unsigned int addr){
 	tag = addr >> (offset_bits + sets_bits);
 	//cout<<"Tag to verify: "<<tag<<endl;
 	switch(asso_level){
-		case 0:
+		case 1:
 			//cout<<"direct mapped cache";
 			if((iterator[set].isValid()) && (iterator[set].cmpTag(tag))){
             //if valid bit is set to 1 and the "tag" matches
